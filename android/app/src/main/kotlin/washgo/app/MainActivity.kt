@@ -1,4 +1,4 @@
-package com.example.tugas_akhir
+package washgo.app  // Sesuaikan dengan namespace di build.gradle
 
 import io.flutter.embedding.android.FlutterActivity
 
