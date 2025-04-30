@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:271364603752:android:5624891e05db356dd3e0dd",
         "android_client_info": {
-        "package_name": "washgo.app"
+          "package_name": "washgo.app"
         }
       },
       "oauth_client": [],
