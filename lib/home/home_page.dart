@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tugas_akhir/component/searchbar.dart';
+import 'package:tugas_akhir/component/promo_section.dart';
+import 'package:tugas_akhir/component/nearby_laundry_section.dart';
+import 'package:tugas_akhir/component/category_section.dart';
+
+import 'searchpage.dart';
+import 'locationpage.dart';
+import 'accountpage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,7 +18,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  final TextEditingController _searchController = TextEditingController();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -19,12 +25,67 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  static final List<Widget> _pages = <Widget>[
+    const MainHome(),
+    const SearchPage(),
+    const LocationPage(),
+    const AccountPage(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 75, 173, 249),
+      backgroundColor: Colors.white,
+      body: _selectedIndex < _pages.length
+          ? _pages[_selectedIndex]
+          : const MainHome(),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _selectedIndex,
+            backgroundColor: const Color.fromARGB(255, 76, 66, 212),
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white70,
+            onTap: _onItemTapped,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.dashboard_customize, size: 28),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.manage_search_rounded, size: 28),
+                label: 'Search',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.pin_drop_rounded, size: 28),
+                label: 'Location',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_pin_rounded, size: 28),
+                label: 'Profile',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MainHome extends StatelessWidget {
+  const MainHome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController _searchController = TextEditingController();
+
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 76, 66, 212),
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
+        preferredSize: const Size.fromHeight(80.0),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -47,126 +108,88 @@ class _HomePageState extends State<HomePage> {
               elevation: 0,
               title: SearchBarWidget(
                 searchController: _searchController,
-                onClose: () => setState(() => _searchController.clear()),
+                onClose: () => _searchController.clear(),
               ),
             ),
           ),
         ),
       ),
-      body: Stack(
-        children: [
-          // Layer putih di bawah
-          Positioned.fill(
-            top: 160,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 80),
-                  // Baris 1
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildCategoryIcon(
-                          Icons.local_laundry_service, "Laundry"),
-                      _buildCategoryIcon(Icons.shopping_bag, "Dry Cleaning"),
-                      _buildCategoryIcon(Icons.cleaning_services, "Cleaning"),
-                      _buildCategoryIcon(
-                          Icons.emoji_transportation, "Shoe Care"),
-                    ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Stack(
+            children: [
+              // White background below purple
+              Container(
+                margin: const EdgeInsets.only(top: 100),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
                   ),
-                  const SizedBox(height: 20),
-                  // Baris 2
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildCategoryIcon(Icons.iron, "Ironing"),
-                      _buildCategoryIcon(Icons.directions_car, "Car Wash"),
-                      _buildCategoryIcon(Icons.build, "Repair"),
-                      _buildCategoryIcon(Icons.more_horiz, "More"),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Card saldo di tengah
-          Positioned(
-            top: 110,
-            left: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 6,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Iconsax.wallet, color: Colors.blue, size: 45),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
                     children: const [
-                      Text(
-                        "Saldo Anda",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                      SizedBox(height: 60),
+                      CategorySection(),
+                      SizedBox(height: 30),
+                      PromoSection(),
+                      SizedBox(height: 30),
+                      NearbyLaundrySection(
+                        showTitle: true,
                       ),
-                      Text(
-                        "Rp 1.000.000",
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      SizedBox(height: 30),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Floating Saldo Card tetap sama
+              Positioned(
+                top: 60,
+                left: 20,
+                right: 20,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 6,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Iconsax.wallet_2,
+                          color: Color.fromARGB(255, 76, 66, 212), size: 45),
+                      SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Saldo Anda",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text("Rp 1.000.000",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.grey)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Iconsax.home_2, size: 34),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Iconsax.setting, size: 34),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blueAccent,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-
-  Widget _buildCategoryIcon(IconData icon, String label) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.blueAccent.withOpacity(0.15),
-          child: Icon(icon, color: Colors.blueAccent, size: 34),
         ),
-        const SizedBox(height: 5),
-        Text(label,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-      ],
+      ),
     );
   }
 }

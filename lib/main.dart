@@ -4,7 +4,7 @@ import '../login/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:tugas_akhir/home/home_page.dart';
 import 'firebase_options.dart';
-import 'package:tugas_akhir/provider/auth_provider.dart'; // pastikan import AuthProvider
+import 'package:tugas_akhir/provider/auth_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         initialRoute: '/',
         routes: {
-          '/': (context) => const LoginPage(),
+          '/': (context) => const HomePage(),
         },
         debugShowCheckedModeBanner: false,
       ),

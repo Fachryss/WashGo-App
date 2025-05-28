@@ -35,7 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 20.0, vertical: 20.0),
                 child: Form(
-                  key: loadAuth.form,
+                  key: loadAuth.registerFormKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -80,8 +80,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (loadAuth.form.currentState!.validate()) {
-                              loadAuth.form.currentState!.save();
+                            if (loadAuth.registerFormKey.currentState!
+                                .validate()) {
+                              loadAuth.registerFormKey.currentState!.save();
                               loadAuth
                                   .toggle(); // untuk mendaftarkan, bukan login
                               final success = await loadAuth.submit();

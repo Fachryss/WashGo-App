@@ -6,7 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 final _fireAuth = FirebaseAuth.instance;
 
 class AuthProvider extends ChangeNotifier {
-  final form = GlobalKey<FormState>();
+  final loginFormKey = GlobalKey<FormState>();
+  final registerFormKey = GlobalKey<FormState>();
 
   bool islogin = true;
   String enteredEmail = '';
@@ -34,52 +35,28 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> submit() async {
-    try {
-      if (islogin) {
-        // Login
-        final result = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: enteredEmail,
-          password: enteredPassword,
-        );
+    if (islogin) {
+      final result = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: enteredEmail,
+        password: enteredPassword,
+      );
 
-        // Cek di Firestore apakah user ada
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(result.user!.uid)
-            .get();
+      return true;
+    } else {
+      final result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: enteredEmail,
+        password: enteredPassword,
+      );
 
-        if (!userDoc.exists) {
-          throw Exception('User tidak ditemukan di database');
-        }
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(result.user!.uid)
+          .set({
+        'email': enteredEmail,
+        // data tambahan bisa ditambahkan di sini
+      });
 
-        return true;
-      } else {
-        // Register
-        final result =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: enteredEmail,
-          password: enteredPassword,
-        );
-
-        // Tambahkan ke Firestore
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(result.user!.uid)
-            .set({
-          'email': enteredEmail,
-          // tambahkan data lain yang dibutuhkan
-        });
-
-        return true;
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        throw Exception('Email atau password salah');
-      } else if (e.code == 'invalid-credential') {
-        throw Exception('Kredensial login tidak valid atau sudah kadaluarsa');
-      } else {
-        throw Exception(e.message ?? 'Terjadi kesalahan');
-      }
+      return true;
     }
   }
 }
